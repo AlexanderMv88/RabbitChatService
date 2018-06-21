@@ -1,5 +1,7 @@
 package org.ChatService.msg;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import org.ChatService.EmployeeApiApplication;
 import org.ChatService.entity.Employee;
 import org.ChatService.entity.Msg;
@@ -125,6 +127,27 @@ public class MsgAmqpTest {
 
 
 
+    }
+
+
+    @Test
+    public void test2Get() throws IOException {
+
+        rabbitTemplate.setExchange(TO_SERVICE_MSG_FANOUT_EXCHANGE);
+        Message msgRequest = createMessage(MSG_SELECT_EVENT, "");
+        Message msg = rabbitTemplate.sendAndReceive(msgRequest);
+        String jsonEntities = new String(msg.getBody());
+        //String jsonEntities = (String) rabbitTemplate.convertSendAndReceive("", "getAll");
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        CollectionType javaType = mapper.getTypeFactory()
+                .constructCollectionType(List.class, Msg.class);
+
+        List<Msg> msgs = mapper.readValue(jsonEntities, javaType);
+        assertThat(msgs != null).isTrue();
+        assertThat(msgs.size() == 2).isTrue();
+        assertThat(msgs.get(0).getText().equals("Hi, I am batman!")).isTrue();
     }
 
 //    @Test

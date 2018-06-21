@@ -1,5 +1,7 @@
 package org.ChatService.employee;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import org.ChatService.EmployeeApiApplication;
 import org.ChatService.entity.Employee;
 import org.ChatService.repository.EmployeeRepository;
@@ -90,8 +92,31 @@ public class EmployeeAmqpTest {
 
     }
 
+
+
+
     @Test
-    public void test2Update() throws Exception {
+    public void test2Get() throws IOException {
+
+        rabbitTemplate.setExchange(TO_SERVICE_EMPLOYEE_FANOUT_EXCHANGE);
+        Message msgRequest = createMessage(EMPLOYEE_SELECT_EVENT, "");
+        Message msg = rabbitTemplate.sendAndReceive(msgRequest);
+        String jsonEntities = new String(msg.getBody());
+        //String jsonEntities = (String) rabbitTemplate.convertSendAndReceive("", "getAll");
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        CollectionType javaType = mapper.getTypeFactory()
+                .constructCollectionType(List.class, Employee.class);
+
+        List<Employee> employees = mapper.readValue(jsonEntities, javaType);
+        assertThat(employees != null).isTrue();
+        assertThat(employees.size() == 1).isTrue();
+        assertThat(employees.get(0).getFullName().equals("Дима")).isTrue();
+    }
+
+    @Test
+    public void test3Update() throws Exception {
         Employee oldEmployee = employeeRepository.findByFullName("Дима").get(0);
         //String oldJsonObj = json(oldEmployee);
 
@@ -120,7 +145,7 @@ public class EmployeeAmqpTest {
 
 
     @Test
-    public void test3Remove() throws Exception {
+    public void test4Remove() throws Exception {
         String jsonObj = json(new Employee("Диман"));
 
         Message msg = createMessage(EMPLOYEE_DELETE_EVENT, jsonObj);
@@ -168,7 +193,7 @@ public class EmployeeAmqpTest {
 
 
     @Test
-    public void test4CheckListenResults(){
+    public void test5CheckListenResults(){
 
         assertThat(isCreated).isTrue();
         assertThat(isUpdated).isTrue();
