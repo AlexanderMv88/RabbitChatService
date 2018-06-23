@@ -1,0 +1,12 @@
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/repository/EmployeeRepository.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/EmployeeApiApplication.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/entity/Msg.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/mq/RabbitEmployee.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/mq/RabbitMqPublisher.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/repository/MsgRepository.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/mq/RabbitMessage.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/mq/RabbitMqListener.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/mq/RabbitMsg.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/mq/RabbitConfiguration.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/entity/Employee.java
+/mnt/3AE09D87682F54BA/workspace/java/Spring.BOOT/Examples/RabbitMQ/ChatService/src/main/java/org/ChatService/controller/AppController.java

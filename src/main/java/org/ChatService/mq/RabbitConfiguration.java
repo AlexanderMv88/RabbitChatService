@@ -22,10 +22,17 @@ public class RabbitConfiguration {
 
     @Bean
     public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory connectionFactory =
-                new CachingConnectionFactory("172.16.175.128");
+//Для виртуалки
+/*        CachingConnectionFactory connectionFactory =
+                new CachingConnectionFactory("localhost");
+
         connectionFactory.setUsername("admin");
-        connectionFactory.setPassword("admin");
+        connectionFactory.setPassword("admin");*/
+
+            CachingConnectionFactory connectionFactory =
+                new CachingConnectionFactory("192.168.1.14");
+            connectionFactory.setUsername("user");
+            connectionFactory.setPassword("pass");
         return connectionFactory;
     }
 
