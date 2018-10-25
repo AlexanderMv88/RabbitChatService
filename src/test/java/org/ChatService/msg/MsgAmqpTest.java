@@ -48,10 +48,8 @@ public class MsgAmqpTest {
 
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
-
     private static boolean isCreated=false;
 
-    //
     @Autowired
     EmployeeRepository employeeRepository;
     @Autowired
@@ -91,18 +89,13 @@ public class MsgAmqpTest {
         return mockHttpOutputMessage.getBodyAsString();
     }
 
-
-
     @Test
     public void test1Create() throws Exception {
-
         rabbitTemplate.setExchange(TO_SERVICE_EMPLOYEE_FANOUT_EXCHANGE);
         String jsonObj = json(new Employee("Дима"));
         Message message = createMessage(EMPLOYEE_CREATE_EVENT, jsonObj);
-
         String jsonObj1 = json(new Employee("Саня"));
         Message message1 = createMessage(EMPLOYEE_CREATE_EVENT, jsonObj1);
-
         rabbitTemplate.send(message);
         rabbitTemplate.send(message1);
 
@@ -113,18 +106,11 @@ public class MsgAmqpTest {
         assertThat(employees.size() == 2).isTrue();
         assertThat(employees.get(0).getFullName().equals("Дима")).isTrue();
         assertThat(employees.get(1).getFullName().equals("Саня")).isTrue();
-
-
-
-
-
         rabbitTemplate.setExchange(TO_SERVICE_MSG_FANOUT_EXCHANGE);
         String jsonMsg = json(new Msg("Hi, I am batman!", employees.get(0)));
         Message message2 = createMessage(MSG_CREATE_EVENT, jsonMsg);
-
         String jsonMsg1 = json(new Msg("Hi, batman!", employees.get(1)));
         Message message3 = createMessage(MSG_CREATE_EVENT, jsonMsg1);
-
         rabbitTemplate.send(message2);
         rabbitTemplate.send(message3);
 
@@ -136,16 +122,9 @@ public class MsgAmqpTest {
         assertThat(messages.size() == 2).isTrue();
         assertThat(messages.get(0).getText().equals("Hi, I am batman!")).isTrue();
         assertThat(messages.get(0).getSender().equals(employees.get(0))).isTrue();
-
         assertThat(messages.get(1).getText().equals("Hi, batman!")).isTrue();
         assertThat(messages.get(1).getSender().equals(employees.get(1))).isTrue();
-
-
-
-
-
     }
-
 
     @Test
     public void test2Get() throws IOException {
@@ -154,9 +133,6 @@ public class MsgAmqpTest {
         Message msgRequest = createMessage(MSG_SELECT_EVENT, "");
         Message msg = rabbitTemplate.sendAndReceive(msgRequest);
         String jsonEntities = new String(msg.getBody());
-        //String jsonEntities = (String) rabbitTemplate.convertSendAndReceive("", "getAll");
-
-
         ObjectMapper mapper = new ObjectMapper();
         CollectionType javaType = mapper.getTypeFactory()
                 .constructCollectionType(List.class, Msg.class);
@@ -170,17 +146,12 @@ public class MsgAmqpTest {
     @Test
     public void test2Update() throws Exception {
         Employee oldEmployee = employeeRepository.findByFullName("Дима").get(0);
-        //String oldJsonObj = json(oldEmployee);
-
         Employee newEmployee = new Employee(oldEmployee);
         newEmployee.setFullName("Диман");
         List<Employee> employees = new ArrayList<Employee>();
         employees.add(oldEmployee);
         employees.add(newEmployee);
-        //String newJsonObj = json(newEmployee);
         String jsonObjs = json(employees);
-
-
         Message msg = createMessage(EMPLOYEE_UPDATE_EVENT, jsonObjs);
         rabbitTemplate.setExchange(TO_SERVICE_EMPLOYEE_FANOUT_EXCHANGE);
         rabbitTemplate.send(msg);
@@ -191,15 +162,11 @@ public class MsgAmqpTest {
         assertThat(employeesFromDB != null).isTrue();
         assertThat(employeesFromDB.size() == 1).isTrue();
         assertThat(employeesFromDB.get(0).getFullName().equals("Диман")).isTrue();
-
-
     }
-
 
     @Test
     public void test3Remove() throws Exception {
         String jsonObj = json(new Employee("Диман"));
-
         Message msg = createMessage(EMPLOYEE_DELETE_EVENT, jsonObj);
         rabbitTemplate.setExchange(TO_SERVICE_EMPLOYEE_FANOUT_EXCHANGE);
         rabbitTemplate.send(msg);
@@ -207,18 +174,8 @@ public class MsgAmqpTest {
         Thread.sleep(100);
 
         List<Employee> employees = employeeRepository.findByFullName("Дима");
-        //assertThat(employees == null).isTrue();
         assertThat(employees.size() == 0).isTrue();
-        //assertThat(employees.get(0).getFullName().equals("Диман")).isTrue();
-
-
     }
-
-
-
-
-
-
 
     @RabbitListener(queues = FROM_SERVICE_MSG_EVENT_QUEUE)
     public void fromServiceEmployee(Message message){
@@ -237,16 +194,8 @@ public class MsgAmqpTest {
 
     }
 
-
     @Test
     public void test4CheckListenResults(){
-
         assertThat(isCreated).isTrue();
-
-
-
-
     }
-
-
 }
