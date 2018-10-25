@@ -38,7 +38,7 @@ public class RabbitConfiguration {
         connectionFactory.setPassword("admin");*/
 
             CachingConnectionFactory connectionFactory =
-                new CachingConnectionFactory("192.168.1.27");
+                new CachingConnectionFactory("192.168.11.20");
             connectionFactory.setUsername("admin");
             connectionFactory.setPassword("admin");
 

@@ -3,11 +3,14 @@ package org.ChatService.msg;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import org.ChatService.EmployeeApiApplication;
+import org.ChatService.SynchronousExecutorService;
 import org.ChatService.entity.Employee;
 import org.ChatService.entity.Msg;
 import org.ChatService.mq.RabbitMqPublisher;
 import org.ChatService.repository.EmployeeRepository;
 import org.ChatService.repository.MsgRepository;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +29,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import static org.ChatService.mq.RabbitEmployee.*;
 import static org.ChatService.mq.RabbitMessage.createMessage;
@@ -54,6 +59,18 @@ public class MsgAmqpTest {
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+
+    private ExecutorService executorService;
+
+    @Before
+    public void setUp() throws Exception {
+        executorService = new SynchronousExecutorService();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        executorService.shutdown();
+    }
 
     @Autowired
     void setConverters(HttpMessageConverter<?>[] converters) {
@@ -89,7 +106,7 @@ public class MsgAmqpTest {
         rabbitTemplate.send(message);
         rabbitTemplate.send(message1);
 
-        Thread.sleep(100);
+        Thread.sleep(500);
 
         List<Employee> employees = employeeRepository.findAll();
         assertThat(employees != null).isTrue();
@@ -150,52 +167,52 @@ public class MsgAmqpTest {
         assertThat(msgs.get(0).getText().equals("Hi, I am batman!")).isTrue();
     }
 
-//    @Test
-//    public void test2Update() throws Exception {
-//        Employee oldEmployee = employeeRepository.findByFullName("Дима").get(0);
-//        //String oldJsonObj = json(oldEmployee);
-//
-//        Employee newEmployee = new Employee(oldEmployee);
-//        newEmployee.setFullName("Диман");
-//        List<Employee> employees = new ArrayList<Employee>();
-//        employees.add(oldEmployee);
-//        employees.add(newEmployee);
-//        //String newJsonObj = json(newEmployee);
-//        String jsonObjs = json(employees);
-//
-//
-//        Message msg = createMessage(EMPLOYEE_UPDATE_EVENT, jsonObjs);
-//        rabbitTemplate.setExchange(TO_SERVICE_EMPLOYEE_FANOUT_EXCHANGE);
-//        rabbitTemplate.send(msg);
-//
-//        Thread.sleep(100);
-//
-//        List<Employee> employeesFromDB = employeeRepository.findByFullName("Диман");
-//        assertThat(employeesFromDB != null).isTrue();
-//        assertThat(employeesFromDB.size() == 1).isTrue();
-//        assertThat(employeesFromDB.get(0).getFullName().equals("Диман")).isTrue();
-//
-//
-//    }
-//
-//
-//    @Test
-//    public void test3Remove() throws Exception {
-//        String jsonObj = json(new Employee("Диман"));
-//
-//        Message msg = createMessage(EMPLOYEE_DELETE_EVENT, jsonObj);
-//        rabbitTemplate.setExchange(TO_SERVICE_EMPLOYEE_FANOUT_EXCHANGE);
-//        rabbitTemplate.send(msg);
-//
-//        Thread.sleep(100);
-//
-//        List<Employee> employees = employeeRepository.findByFullName("Дима");
-//        //assertThat(employees == null).isTrue();
-//        assertThat(employees.size() == 0).isTrue();
-//        //assertThat(employees.get(0).getFullName().equals("Диман")).isTrue();
-//
-//
-//    }
+    @Test
+    public void test2Update() throws Exception {
+        Employee oldEmployee = employeeRepository.findByFullName("Дима").get(0);
+        //String oldJsonObj = json(oldEmployee);
+
+        Employee newEmployee = new Employee(oldEmployee);
+        newEmployee.setFullName("Диман");
+        List<Employee> employees = new ArrayList<Employee>();
+        employees.add(oldEmployee);
+        employees.add(newEmployee);
+        //String newJsonObj = json(newEmployee);
+        String jsonObjs = json(employees);
+
+
+        Message msg = createMessage(EMPLOYEE_UPDATE_EVENT, jsonObjs);
+        rabbitTemplate.setExchange(TO_SERVICE_EMPLOYEE_FANOUT_EXCHANGE);
+        rabbitTemplate.send(msg);
+
+        Thread.sleep(100);
+
+        List<Employee> employeesFromDB = employeeRepository.findByFullName("Диман");
+        assertThat(employeesFromDB != null).isTrue();
+        assertThat(employeesFromDB.size() == 1).isTrue();
+        assertThat(employeesFromDB.get(0).getFullName().equals("Диман")).isTrue();
+
+
+    }
+
+
+    @Test
+    public void test3Remove() throws Exception {
+        String jsonObj = json(new Employee("Диман"));
+
+        Message msg = createMessage(EMPLOYEE_DELETE_EVENT, jsonObj);
+        rabbitTemplate.setExchange(TO_SERVICE_EMPLOYEE_FANOUT_EXCHANGE);
+        rabbitTemplate.send(msg);
+
+        Thread.sleep(100);
+
+        List<Employee> employees = employeeRepository.findByFullName("Дима");
+        //assertThat(employees == null).isTrue();
+        assertThat(employees.size() == 0).isTrue();
+        //assertThat(employees.get(0).getFullName().equals("Диман")).isTrue();
+
+
+    }
 
 
 
