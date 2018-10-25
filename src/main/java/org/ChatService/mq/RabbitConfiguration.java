@@ -7,8 +7,14 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import static org.ChatService.mq.RabbitEmployee.*;
 import static org.ChatService.mq.RabbitMsg.*;
@@ -19,6 +25,8 @@ public class RabbitConfiguration {
 
 
 
+    @Autowired
+    private Environment env;
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -30,9 +38,31 @@ public class RabbitConfiguration {
         connectionFactory.setPassword("admin");*/
 
             CachingConnectionFactory connectionFactory =
-                new CachingConnectionFactory("192.168.1.14");
-            connectionFactory.setUsername("user");
-            connectionFactory.setPassword("pass");
+                new CachingConnectionFactory("192.168.1.27");
+            connectionFactory.setUsername("admin");
+            connectionFactory.setPassword("admin");
+
+
+
+
+        String hostname = "Unknown";
+
+        try
+        {
+            InetAddress addr;
+            addr = InetAddress.getLocalHost();
+            hostname = addr.getHostName();
+            System.out.println("!!!!!!!!!!!!hostname = " + hostname);
+            String path = env.getProperty(hostname+".path");
+            System.out.println("!!!!!!!!!!!!hostname.path = " + path);
+        }
+        catch (UnknownHostException ex)
+        {
+            System.out.println("Hostname can not be resolved");
+        }
+
+
+
         return connectionFactory;
     }
 
